@@ -73,7 +73,16 @@ class Message extends BaseMessage
      */
     public function setFrom($from)
     {
-        $this->getMessageBuilder()->setFromAddress($from);
+        /**
+         * Added compliance with swift_mailer to set Name <email> like ['email' => 'name']
+         */
+        $variables = [];
+        if(is_array($from)) {
+            $email = each($from);
+            $from = $email['key'];
+            $variables['full_name'] = $email['value'];
+        }
+        $this->getMessageBuilder()->setFromAddress($from, $variables);
 
         return $this;
     }
